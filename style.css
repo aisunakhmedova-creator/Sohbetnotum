@@ -1,0 +1,141 @@
+/* GENEL AYARLAR */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", sans-serif;
+}
+
+body {
+    background-color: #141529;
+    color: #fff;
+}
+
+/* NAVBAR */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 24px;
+    background-color: #1c1e35;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.logo {
+    font-size: 32px;
+    font-weight: 600;
+}
+
+.logo-main {
+    background: linear-gradient(90deg, #6ea8ff 0%, #63e6be 45%, #ffd166 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.logo-accent {
+    background: linear-gradient(90deg, #ff8fab 0%, #c77dff 50%, #7b2cbf 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* NAV RIGHT */
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.search-box input {
+    padding: 8px 12px;
+    background-color: #24264a;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    color: white;
+    outline: none;
+    width: 180px;
+}
+
+.language-select {
+    padding: 7px 10px;
+    background-color: #24264a;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    color: white;
+}
+
+.icon-btn {
+    background-color: #24264a;
+    border: none;
+    padding: 8px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    color: white;
+    transition: 0.2s;
+}
+
+.icon-btn:hover {
+    background-color: #323466;
+}
+
+.admin-btn {
+    padding: 8px 14px;
+    background: linear-gradient(90deg, #7b8cff, #b36dff);
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.admin-btn:hover {
+    opacity: 0.9;
+}
+
+/* ANA LAYOUT */
+.container {
+    display: flex;
+    height: calc(100vh - 70px);
+}
+
+/* SIDEBAR */
+.sidebar {
+    width: 260px;
+    background-color: #181a2f;
+    padding: 25px;
+    border-right: 1px solid rgba(255,255,255,0.08);
+}
+
+.sidebar h2 {
+    margin-bottom: 20px;
+    font-size: 18px;
+    color: #ccc;
+}
+
+.sidebar ul {
+    list-style: none;
+}
+
+.sidebar li {
+    padding: 10px 0;
+    color: #aaa;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.sidebar li:hover {
+    color: white;
+}
+
+/* CONTENT */
+.content {
+    flex: 1;
+    padding: 30px;
+}
+
+.empty-area {
+    height: 100%;
+    border-radius: 12px;
+    background-color: #16182e;
+    border: 1px solid rgba(255,255,255,0.05);
+}
