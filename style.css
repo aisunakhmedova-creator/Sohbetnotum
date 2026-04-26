@@ -95,7 +95,8 @@ body {
 /* ANA LAYOUT */
 .container {
     display: flex;
-    height: calc(100vh - 70px);
+    min-height: calc(100vh - 70px);
+    align-items: stretch;
 }
 
 /* SIDEBAR */
@@ -131,10 +132,11 @@ body {
 .content {
     flex: 1;
     padding: 30px;
+    display: flex;
 }
 
 .empty-area {
-    height: 100%;
+    flex: 1;
     border-radius: 12px;
     background-color: #16182e;
     border: 1px solid rgba(255,255,255,0.05);
