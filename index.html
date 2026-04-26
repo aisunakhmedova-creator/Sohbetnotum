@@ -20,18 +20,18 @@
                 <input type="text" placeholder="Ara...">
             </div>
 
-            <select class="language-select">
-                <option>Türkçe</option>
-                <option>Azerbaycanca</option>
-                <option>English</option>
-                <option>Arapça</option>
-                <option>Rusça</option>
-                <option>Fransızca</option>
-                <option>Almanca</option>
-                <option>İspanyolca</option>
-                <option>İtalyanca</option>
-                <option>Farsça</option>
-                <option>Çince</option>
+            <select class="language-select" id="languageSelect">
+                <option value="tr">Türkçe</option>
+                <option value="az">Azerbaycanca</option>
+                <option value="en">English</option>
+                <option value="ar">Arapça</option>
+                <option value="ru">Rusça</option>
+                <option value="fr">Fransızca</option>
+                <option value="de">Almanca</option>
+                <option value="es">İspanyolca</option>
+                <option value="it">İtalyanca</option>
+                <option value="fa">Farsça</option>
+                <option value="zh">Çince</option>
             </select>
 
             <button class="icon-btn">✉</button>
@@ -46,30 +46,8 @@
 
         <!-- SOL KATEGORİ PANELİ -->
         <aside class="sidebar">
-            <h2>Kategoriler</h2>
-            <ul>
-                <li>Restoran</li>
-                <li>Berber</li>
-                <li>Kafe</li>
-                <li>Manav</li>
-                <li>Market</li>
-                <li>Fırın</li>
-                <li>Eczane</li>
-                <li>Kasap</li>
-                <li>Giyim mağazası</li>
-                <li>Ayakkabı mağazası</li>
-                <li>Kozmetik mağazası</li>
-                <li>Elektronik mağazası</li>
-                <li>Güzellik salonu</li>
-                <li>Oto yıkama</li>
-                <li>Telefon/bilgisayar tamiri</li>
-                <li>Terzi</li>
-                <li>Fotoğraf &amp; video stüdyosu</li>
-                <li>Spor salonu (fitness)</li>
-                <li>Yoga / pilates stüdyosu</li>
-                <li>Oyun salonu</li>
-                <li>Dil kursu</li>
-            </ul>
+            <h2 id="categoryTitle">Kategoriler</h2>
+            <ul id="categoryList"></ul>
         </aside>
 
         <!-- ANA İÇERİK -->
@@ -81,5 +59,317 @@
 
     </div>
 
+    <script>
+        const translations = {
+            tr: {
+                title: "Kategoriler",
+                items: [
+                    "Restoran",
+                    "Berber",
+                    "Kafe",
+                    "Manav",
+                    "Market",
+                    "Fırın",
+                    "Eczane",
+                    "Kasap",
+                    "Giyim mağazası",
+                    "Ayakkabı mağazası",
+                    "Kozmetik mağazası",
+                    "Elektronik mağazası",
+                    "Güzellik salonu",
+                    "Oto yıkama",
+                    "Telefon/bilgisayar tamiri",
+                    "Terzi",
+                    "Fotoğraf & video stüdyosu",
+                    "Spor salonu (fitness)",
+                    "Yoga / pilates stüdyosu",
+                    "Oyun salonu",
+                    "Dil kursu"
+                ]
+            },
+            az: {
+                title: "Kateqoriyalar",
+                items: [
+                    "Restoran",
+                    "Bərbər",
+                    "Kafe",
+                    "Meyvə-tərəvəz dükanı",
+                    "Market",
+                    "Çörək sexi",
+                    "Aptek",
+                    "Qəssab",
+                    "Geyim mağazası",
+                    "Ayaqqabı mağazası",
+                    "Kosmetika mağazası",
+                    "Elektronika mağazası",
+                    "Gözəllik salonu",
+                    "Avtoyuma",
+                    "Telefon/kompüter təmiri",
+                    "Dərzi",
+                    "Foto və video studiyası",
+                    "İdman zalı (fitness)",
+                    "Yoqa / pilates studiyası",
+                    "Oyun salonu",
+                    "Dil kursu"
+                ]
+            },
+            en: {
+                title: "Categories",
+                items: [
+                    "Restaurant",
+                    "Barber",
+                    "Cafe",
+                    "Greengrocer",
+                    "Market",
+                    "Bakery",
+                    "Pharmacy",
+                    "Butcher",
+                    "Clothing store",
+                    "Shoe store",
+                    "Cosmetics store",
+                    "Electronics store",
+                    "Beauty salon",
+                    "Car wash",
+                    "Phone/computer repair",
+                    "Tailor",
+                    "Photo & video studio",
+                    "Gym (fitness)",
+                    "Yoga / pilates studio",
+                    "Game arcade",
+                    "Language course"
+                ]
+            },
+            ar: {
+                title: "الفئات",
+                items: [
+                    "مطعم",
+                    "حلاق",
+                    "مقهى",
+                    "بقال خضار وفواكه",
+                    "متجر",
+                    "مخبز",
+                    "صيدلية",
+                    "جزارة",
+                    "متجر ملابس",
+                    "متجر أحذية",
+                    "متجر مستحضرات تجميل",
+                    "متجر إلكترونيات",
+                    "صالون تجميل",
+                    "غسيل سيارات",
+                    "إصلاح الهاتف والكمبيوتر",
+                    "خياط",
+                    "استوديو تصوير وفيديو",
+                    "صالة رياضية",
+                    "استوديو يوغا / بيلاتس",
+                    "صالة ألعاب",
+                    "دورة لغة"
+                ]
+            },
+            ru: {
+                title: "Категории",
+                items: [
+                    "Ресторан",
+                    "Барбершоп",
+                    "Кафе",
+                    "Овощная лавка",
+                    "Маркет",
+                    "Пекарня",
+                    "Аптека",
+                    "Мясная лавка",
+                    "Магазин одежды",
+                    "Магазин обуви",
+                    "Магазин косметики",
+                    "Магазин электроники",
+                    "Салон красоты",
+                    "Автомойка",
+                    "Ремонт телефонов и компьютеров",
+                    "Ателье",
+                    "Фото- и видеостудия",
+                    "Спортзал",
+                    "Студия йоги / пилатеса",
+                    "Игровой зал",
+                    "Языковые курсы"
+                ]
+            },
+            fr: {
+                title: "Catégories",
+                items: [
+                    "Restaurant",
+                    "Barbier",
+                    "Café",
+                    "Marchand de fruits et légumes",
+                    "Marché",
+                    "Boulangerie",
+                    "Pharmacie",
+                    "Boucherie",
+                    "Magasin de vêtements",
+                    "Magasin de chaussures",
+                    "Magasin de cosmétiques",
+                    "Magasin d'électronique",
+                    "Salon de beauté",
+                    "Lavage auto",
+                    "Réparation téléphone/ordinateur",
+                    "Tailleur",
+                    "Studio photo et vidéo",
+                    "Salle de sport",
+                    "Studio de yoga / pilates",
+                    "Salle de jeux",
+                    "Cours de langue"
+                ]
+            },
+            de: {
+                title: "Kategorien",
+                items: [
+                    "Restaurant",
+                    "Barbier",
+                    "Café",
+                    "Obst- und Gemüseladen",
+                    "Markt",
+                    "Bäckerei",
+                    "Apotheke",
+                    "Metzgerei",
+                    "Bekleidungsgeschäft",
+                    "Schuhgeschäft",
+                    "Kosmetikgeschäft",
+                    "Elektronikgeschäft",
+                    "Schönheitssalon",
+                    "Autowäsche",
+                    "Handy-/Computer-Reparatur",
+                    "Schneiderei",
+                    "Foto- und Videostudio",
+                    "Fitnessstudio",
+                    "Yoga- / Pilates-Studio",
+                    "Spielhalle",
+                    "Sprachkurs"
+                ]
+            },
+            es: {
+                title: "Categorías",
+                items: [
+                    "Restaurante",
+                    "Barbería",
+                    "Café",
+                    "Frutería",
+                    "Mercado",
+                    "Panadería",
+                    "Farmacia",
+                    "Carnicería",
+                    "Tienda de ropa",
+                    "Tienda de zapatos",
+                    "Tienda de cosméticos",
+                    "Tienda de electrónica",
+                    "Salón de belleza",
+                    "Lavado de autos",
+                    "Reparación de teléfonos/computadoras",
+                    "Sastrería",
+                    "Estudio de foto y video",
+                    "Gimnasio",
+                    "Estudio de yoga / pilates",
+                    "Sala de juegos",
+                    "Curso de idiomas"
+                ]
+            },
+            it: {
+                title: "Categorie",
+                items: [
+                    "Ristorante",
+                    "Barbiere",
+                    "Caffè",
+                    "Fruttivendolo",
+                    "Mercato",
+                    "Panetteria",
+                    "Farmacia",
+                    "Macelleria",
+                    "Negozio di abbigliamento",
+                    "Negozio di scarpe",
+                    "Negozio di cosmetici",
+                    "Negozio di elettronica",
+                    "Salone di bellezza",
+                    "Autolavaggio",
+                    "Riparazione telefoni/computer",
+                    "Sartoria",
+                    "Studio fotografico e video",
+                    "Palestra",
+                    "Studio di yoga / pilates",
+                    "Sala giochi",
+                    "Corso di lingua"
+                ]
+            },
+            fa: {
+                title: "دسته‌بندی‌ها",
+                items: [
+                    "رستوران",
+                    "آرایشگاه مردانه",
+                    "کافه",
+                    "میوه و سبزی فروشی",
+                    "مارکت",
+                    "نانوایی",
+                    "داروخانه",
+                    "قصابی",
+                    "فروشگاه لباس",
+                    "فروشگاه کفش",
+                    "فروشگاه لوازم آرایشی",
+                    "فروشگاه لوازم الکترونیکی",
+                    "سالن زیبایی",
+                    "کارواش",
+                    "تعمیر موبایل و کامپیوتر",
+                    "خیاطی",
+                    "استودیو عکس و ویدیو",
+                    "باشگاه ورزشی",
+                    "استودیو یوگا / پیلاتس",
+                    "سالن بازی",
+                    "کلاس زبان"
+                ]
+            },
+            zh: {
+                title: "分类",
+                items: [
+                    "餐厅",
+                    "理发店",
+                    "咖啡馆",
+                    "果蔬店",
+                    "超市",
+                    "面包店",
+                    "药店",
+                    "肉店",
+                    "服装店",
+                    "鞋店",
+                    "化妆品店",
+                    "电子产品店",
+                    "美容院",
+                    "洗车店",
+                    "手机/电脑维修",
+                    "裁缝店",
+                    "摄影和视频工作室",
+                    "健身房",
+                    "瑜伽 / 普拉提工作室",
+                    "游戏厅",
+                    "语言课程"
+                ]
+            }
+        };
+
+        const languageSelect = document.getElementById("languageSelect");
+        const categoryTitle = document.getElementById("categoryTitle");
+        const categoryList = document.getElementById("categoryList");
+
+        function renderCategories(language) {
+            const current = translations[language] || translations.tr;
+            categoryTitle.textContent = current.title;
+            categoryList.innerHTML = "";
+
+            current.items.forEach((item) => {
+                const li = document.createElement("li");
+                li.textContent = item;
+                categoryList.appendChild(li);
+            });
+        }
+
+        languageSelect.addEventListener("change", (event) => {
+            renderCategories(event.target.value);
+        });
+
+        renderCategories(languageSelect.value);
+    </script>
 </body>
 </html>
