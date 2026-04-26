@@ -35,7 +35,7 @@
             </select>
 
             <button class="icon-btn">✉</button>
-            <button class="icon-btn">☀</button>
+            <button class="icon-btn" id="themeToggle" type="button" aria-label="Tema değiştir">☀</button>
 
             <button class="admin-btn">Admin Panel</button>
         </div>
@@ -352,6 +352,7 @@
         const languageSelect = document.getElementById("languageSelect");
         const categoryTitle = document.getElementById("categoryTitle");
         const categoryList = document.getElementById("categoryList");
+        const themeToggle = document.getElementById("themeToggle");
 
         function renderCategories(language) {
             const current = translations[language] || translations.tr;
@@ -367,6 +368,11 @@
 
         languageSelect.addEventListener("change", (event) => {
             renderCategories(event.target.value);
+        });
+
+        themeToggle.addEventListener("click", () => {
+            const isLightMode = document.body.classList.toggle("light-mode");
+            themeToggle.textContent = isLightMode ? "☾" : "☀";
         });
 
         renderCategories(languageSelect.value);

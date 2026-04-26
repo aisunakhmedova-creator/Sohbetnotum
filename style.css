@@ -1,4 +1,34 @@
 /* GENEL AYARLAR */
+:root {
+    --page-bg: #141529;
+    --text-color: #ffffff;
+    --muted-text: #aaa;
+    --heading-text: #ccc;
+    --navbar-bg: #1c1e35;
+    --panel-bg: #181a2f;
+    --field-bg: #24264a;
+    --field-hover: #323466;
+    --field-border: rgba(255,255,255,0.1);
+    --divider: rgba(255,255,255,0.08);
+    --content-bg: #16182e;
+    --content-border: rgba(255,255,255,0.05);
+}
+
+body.light-mode {
+    --page-bg: #f4f6ff;
+    --text-color: #1d2340;
+    --muted-text: #4d567f;
+    --heading-text: #2f3a68;
+    --navbar-bg: #eef1ff;
+    --panel-bg: #e7ebff;
+    --field-bg: #ffffff;
+    --field-hover: #dce3ff;
+    --field-border: rgba(79,95,155,0.18);
+    --divider: rgba(79,95,155,0.16);
+    --content-bg: #fdfdff;
+    --content-border: rgba(79,95,155,0.14);
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -7,8 +37,9 @@
 }
 
 body {
-    background-color: #141529;
-    color: #fff;
+    background-color: var(--page-bg);
+    color: var(--text-color);
+    transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 /* NAVBAR */
@@ -17,8 +48,9 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 15px 24px;
-    background-color: #1c1e35;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
+    background-color: var(--navbar-bg);
+    border-bottom: 1px solid var(--divider);
+    transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
 .logo {
@@ -47,34 +79,40 @@ body {
 
 .search-box input {
     padding: 8px 12px;
-    background-color: #24264a;
-    border: 1px solid rgba(255,255,255,0.1);
+    background-color: var(--field-bg);
+    border: 1px solid var(--field-border);
     border-radius: 6px;
-    color: white;
+    color: var(--text-color);
     outline: none;
     width: 180px;
+    transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+
+.search-box input::placeholder {
+    color: var(--muted-text);
 }
 
 .language-select {
     padding: 7px 10px;
-    background-color: #24264a;
-    border: 1px solid rgba(255,255,255,0.1);
+    background-color: var(--field-bg);
+    border: 1px solid var(--field-border);
     border-radius: 6px;
-    color: white;
+    color: var(--text-color);
+    transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
 }
 
 .icon-btn {
-    background-color: #24264a;
-    border: none;
+    background-color: var(--field-bg);
+    border: 1px solid var(--field-border);
     padding: 8px 10px;
     border-radius: 6px;
     cursor: pointer;
-    color: white;
-    transition: 0.2s;
+    color: var(--text-color);
+    transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
 }
 
 .icon-btn:hover {
-    background-color: #323466;
+    background-color: var(--field-hover);
 }
 
 .admin-btn {
@@ -102,15 +140,17 @@ body {
 /* SIDEBAR */
 .sidebar {
     width: 260px;
-    background-color: #181a2f;
+    background-color: var(--panel-bg);
     padding: 25px;
-    border-right: 1px solid rgba(255,255,255,0.08);
+    border-right: 1px solid var(--divider);
+    transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
 .sidebar h2 {
     margin-bottom: 20px;
     font-size: 18px;
-    color: #ccc;
+    color: var(--heading-text);
+    transition: color 0.25s ease;
 }
 
 .sidebar ul {
@@ -119,13 +159,13 @@ body {
 
 .sidebar li {
     padding: 10px 0;
-    color: #aaa;
+    color: var(--muted-text);
     cursor: pointer;
-    transition: 0.2s;
+    transition: color 0.25s ease;
 }
 
 .sidebar li:hover {
-    color: white;
+    color: var(--text-color);
 }
 
 /* CONTENT */
@@ -138,6 +178,7 @@ body {
 .empty-area {
     flex: 1;
     border-radius: 12px;
-    background-color: #16182e;
-    border: 1px solid rgba(255,255,255,0.05);
+    background-color: var(--content-bg);
+    border: 1px solid var(--content-border);
+    transition: background-color 0.25s ease, border-color 0.25s ease;
 }
