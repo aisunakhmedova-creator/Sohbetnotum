@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Locally Admin Panel</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">
+            <span class="logo-main">Local</span><span class="logo-accent">ly</span>
+        </div>
+
+        <div class="nav-right">
+            <div class="search-box">
+                <input type="text" placeholder="Panelde ara...">
+            </div>
+
+            <button class="icon-btn" id="themeToggle" type="button" aria-label="Tema değiştir">☀</button>
+            <a class="admin-btn" href="index.html">Ana Sayfa</a>
+        </div>
+    </header>
+
+    <div class="container admin-layout">
+        <aside class="sidebar admin-sidebar">
+            <div>
+                <h2>Panel Menüsü</h2>
+                <ul>
+                    <li>Hesap Oluştur</li>
+                    <li>İşletme Bilgileri</li>
+                    <li>Konum Yönetimi</li>
+                    <li>Galeri Yükleme</li>
+                    <li>Video Tanıtımı</li>
+                    <li>Yayın Önizleme</li>
+                </ul>
+            </div>
+
+            <div class="sidebar-note">
+                <h3>Yayın Durumu</h3>
+                <p>İşletmeler burada profil açıp isim, konum, fotoğraf ve video içeriklerini yayınlayabilir.</p>
+            </div>
+        </aside>
+
+        <main class="content admin-content">
+            <section class="admin-shell">
+                <div class="panel-card hero-card">
+                    <div>
+                        <span class="eyebrow">İşletme Yönetimi</span>
+                        <h1>Her işletme kendi hesabını oluşturup içeriklerini paylaşabilir.</h1>
+                        <p>Bu panel; kayıt, işletme bilgisi, adres, görsel galeri ve video tanıtımı için tek yerden yönetim sağlar.</p>
+                    </div>
+
+                    <div class="hero-stats">
+                        <div class="stat-box">
+                            <strong>01</strong>
+                            <span>Hesap oluştur</span>
+                        </div>
+                        <div class="stat-box">
+                            <strong>02</strong>
+                            <span>İşletmeni tanıt</span>
+                        </div>
+                        <div class="stat-box">
+                            <strong>03</strong>
+                            <span>Medya yükle</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-grid">
+                    <section class="panel-card">
+                        <div class="section-heading">
+                            <div>
+                                <span class="eyebrow">Yeni Kullanıcı</span>
+                                <h2>Hesap Oluştur</h2>
+                            </div>
+                            <span class="status-pill">Aktif</span>
+                        </div>
+
+                        <form class="admin-form">
+                            <div class="form-row">
+                                <label>
+                                    <span>Ad Soyad</span>
+                                    <input type="text" placeholder="İşletme sahibi adı">
+                                </label>
+                                <label>
+                                    <span>E-posta</span>
+                                    <input type="email" placeholder="ornek@firma.com">
+                                </label>
+                            </div>
+
+                            <div class="form-row">
+                                <label>
+                                    <span>Şifre</span>
+                                    <input type="password" placeholder="Şifre oluştur">
+                                </label>
+                                <label>
+                                    <span>Telefon</span>
+                                    <input type="tel" placeholder="+994 / +90 ...">
+                                </label>
+                            </div>
+
+                            <button type="button" class="admin-btn">Hesabı Kaydet</button>
+                        </form>
+                    </section>
+
+                    <section class="panel-card">
+                        <div class="section-heading">
+                            <div>
+                                <span class="eyebrow">Profil</span>
+                                <h2>İşletme Bilgileri</h2>
+                            </div>
+                        </div>
+
+                        <form class="admin-form">
+                            <label>
+                                <span>İşletme Adı</span>
+                                <input type="text" placeholder="Örn. Local Coffee House">
+                            </label>
+
+                            <div class="form-row">
+                                <label>
+                                    <span>Kategori</span>
+                                    <select>
+                                        <option>Restoran</option>
+                                        <option>Kafe</option>
+                                        <option>Berber</option>
+                                        <option>Güzellik Salonu</option>
+                                        <option>Market</option>
+                                    </select>
+                                </label>
+                                <label>
+                                    <span>Çalışma Saatleri</span>
+                                    <input type="text" placeholder="09:00 - 22:00">
+                                </label>
+                            </div>
+
+                            <label>
+                                <span>Kısa Açıklama</span>
+                                <textarea rows="4" placeholder="İşletmenizi kısaca tanıtın"></textarea>
+                            </label>
+                        </form>
+                    </section>
+
+                    <section class="panel-card">
+                        <div class="section-heading">
+                            <div>
+                                <span class="eyebrow">Konum</span>
+                                <h2>Adres ve Harita Bilgisi</h2>
+                            </div>
+                        </div>
+
+                        <form class="admin-form">
+                            <label>
+                                <span>Adres</span>
+                                <input type="text" placeholder="Cadde, mahalle, bina no">
+                            </label>
+
+                            <div class="form-row">
+                                <label>
+                                    <span>Şehir</span>
+                                    <input type="text" placeholder="Bakü / İstanbul">
+                                </label>
+                                <label>
+                                    <span>Google Maps Linki</span>
+                                    <input type="url" placeholder="https://maps.google.com/...">
+                                </label>
+                            </div>
+                        </form>
+                    </section>
+
+                    <section class="panel-card">
+                        <div class="section-heading">
+                            <div>
+                                <span class="eyebrow">Medya</span>
+                                <h2>Fotoğraf ve Video Alanı</h2>
+                            </div>
+                        </div>
+
+                        <div class="upload-grid">
+                            <div class="upload-box">
+                                <strong>Fotoğraf Yükle</strong>
+                                <p>Kapak görseli, mekan içi ve ürün fotoğrafları ekleyin.</p>
+                                <button type="button" class="icon-btn wide-btn">Dosya Seç</button>
+                            </div>
+                            <div class="upload-box">
+                                <strong>Video Paylaş</strong>
+                                <p>Tanıtım videosu veya reels bağlantısı ekleyin.</p>
+                                <button type="button" class="icon-btn wide-btn">Video Ekle</button>
+                            </div>
+                        </div>
+
+                        <div class="media-preview">
+                            <div class="preview-tile">Kapak Görseli</div>
+                            <div class="preview-tile">Galeri 1</div>
+                            <div class="preview-tile">Galeri 2</div>
+                            <div class="preview-tile">Video Önizleme</div>
+                        </div>
+                    </section>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const themeToggle = document.getElementById("themeToggle");
+
+        themeToggle.addEventListener("click", () => {
+            const isLightMode = document.body.classList.toggle("light-mode");
+            themeToggle.textContent = isLightMode ? "☾" : "☀";
+        });
+    </script>
+</body>
+</html>
