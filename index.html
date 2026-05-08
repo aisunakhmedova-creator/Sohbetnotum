@@ -5,6 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SohbetNotum</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .article-card { cursor: pointer; border-radius: 16px; overflow: hidden; background: var(--card-bg, rgba(255,255,255,0.05)); border: 1px solid rgba(255,255,255,0.08); transition: transform .2s, box-shadow .2s; }
+        .article-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,.35); }
+        .article-card .card-cover { height: 180px; background: #1e1a35 center/cover no-repeat; }
+        .article-card .card-body { padding: 16px 18px 20px; }
+        .article-card .art-meta { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; font-size: 12px; color: #a78bfa; }
+        .article-card .art-title { font-size: 17px; font-weight: 600; margin-bottom: 8px; line-height: 1.4; }
+        .article-card .art-excerpt { font-size: 13px; color: #aaa; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .article-card .art-cta { margin-top: 14px; font-size: 13px; color: #a78bfa; }
+        .empty-msg { text-align: center; padding: 80px 20px; color: #555; font-size: 16px; }
+        .detail-article { max-width: 720px; margin: 0 auto; padding: 40px 24px; }
+        .detail-article h1 { font-size: 28px; margin-bottom: 12px; line-height: 1.35; }
+        .detail-article .art-date { color: #a78bfa; font-size: 13px; margin-bottom: 28px; }
+        .detail-article .art-body { font-size: 16px; line-height: 1.85; white-space: pre-wrap; color: #ccc; }
+        .detail-article .art-cover-img { width: 100%; border-radius: 12px; margin-bottom: 28px; object-fit: cover; max-height: 380px; }
+        body.light-mode .article-card { background: #f5f3ff; border-color: #e0d9f7; }
+        body.light-mode .article-card .art-excerpt { color: #666; }
+        body.light-mode .detail-article .art-body { color: #333; }
+        .sidebar li.active-year { color: #a78bfa; font-weight: 600; }
+        .sidebar li ul li.active-month { color: #a78bfa; font-weight: 600; }
+    </style>
 </head>
 <body>
 
@@ -15,7 +36,7 @@
         </div>
         <div class="nav-right">
             <div class="search-box">
-                <input type="text" placeholder="Ara...">
+                <input type="text" id="searchInput" placeholder="Ara...">
             </div>
             <select class="language-select" id="languageSelect">
                 <option value="tr">Türkçe</option>
@@ -30,7 +51,6 @@
                 <option value="fa">Farsça</option>
                 <option value="zh">Çince</option>
             </select>
-            <button class="icon-btn">✉</button>
             <button class="icon-btn" id="themeToggle" type="button" aria-label="Tema değiştir">☀</button>
             <a class="admin-btn" href="admin-panel.html">Admin Panel</a>
         </div>
@@ -51,32 +71,10 @@
 
     <!-- DETAY GÖRÜNÜMÜ -->
     <div id="detailView" class="detail-view hidden">
-        <div class="detail-cover-wrap">
-            <img id="detailCover" src="" alt="Kapak" class="detail-cover-img">
-            <div class="detail-cover-overlay">
-                <button class="back-btn" id="backBtn">← Geri dön</button>
-                <div class="detail-cover-info">
-                    <div class="detail-cover-icon" id="detailCoverIcon"></div>
-                    <div>
-                        <h1 id="detailName"></h1>
-                        <span class="listing-category" id="detailCategory"></span>
-                        <div class="detail-cover-location" id="detailLocation"></div>
-                    </div>
-                </div>
-            </div>
+        <div style="padding: 20px 24px;">
+            <button class="back-btn" id="backBtn" style="position:static;margin-bottom:20px;">← Geri dön</button>
         </div>
-        <div class="detail-body">
-            <div class="detail-tags" id="detailTags"></div>
-            <div class="detail-two-col">
-                <div class="detail-main" id="detailMain"></div>
-                <div class="detail-map-col">
-                    <div class="detail-map-label">📍 Konum</div>
-                    <div class="detail-map-wrap">
-                        <iframe id="detailMapFrame" src="" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <div id="detailArticle"></div>
     </div>
 
     <script>
@@ -95,18 +93,13 @@
             zh: ["一月","二月","三月","四月","五月","六月","七月","八月","九月","十月","十一月","十二月"]
         };
 
+        const trMonths = months.tr; // Makaleler Türkçe ay adıyla kaydediliyor
+
         const translations = {
-            tr: { title: "Kategoriler" },
-            az: { title: "Kateqoriyalar" },
-            en: { title: "Categories" },
-            ar: { title: "الفئات" },
-            ru: { title: "Категории" },
-            fr: { title: "Catégories" },
-            de: { title: "Kategorien" },
-            es: { title: "Categorías" },
-            it: { title: "Categorie" },
-            fa: { title: "دسته‌بندی‌ها" },
-            zh: { title: "分类" }
+            tr: { title: "Kategoriler" }, az: { title: "Kateqoriyalar" }, en: { title: "Categories" },
+            ar: { title: "الفئات" }, ru: { title: "Категории" }, fr: { title: "Catégories" },
+            de: { title: "Kategorien" }, es: { title: "Categorías" }, it: { title: "Categorie" },
+            fa: { title: "دسته‌بندی‌ها" }, zh: { title: "分类" }
         };
 
         const years = ["2016", "2017", "2018"];
@@ -115,18 +108,39 @@
         const categoryTitle  = document.getElementById("categoryTitle");
         const categoryList   = document.getElementById("categoryList");
         const themeToggle    = document.getElementById("themeToggle");
+        const listingView    = document.getElementById("listingView");
+        const detailView     = document.getElementById("detailView");
+        const backBtn        = document.getElementById("backBtn");
+        const listingsArea   = document.getElementById("listingsArea");
 
-        let openYear = null;
+        let openYear     = null;
+        let filterYear   = null;
+        let filterMonth  = null; // Türkçe ay adı
 
+        // ── VERİ ──────────────────────────────────────────────────────────
+        function getArticles() { return JSON.parse(localStorage.getItem("sn_articles") || "[]"); }
+
+        // ── KATEGORİ LİSTESİ ─────────────────────────────────────────────
         function renderCategories(lang) {
             const cur = translations[lang] || translations.tr;
             categoryTitle.textContent = cur.title;
             categoryList.innerHTML = "";
+
+            // Tümü
+            const allLi = document.createElement("li");
+            allLi.textContent = lang === "tr" ? "Tümü" : lang === "en" ? "All" : lang === "ar" ? "الكل" : lang === "ru" ? "Все" : lang === "fr" ? "Tout" : lang === "de" ? "Alle" : lang === "es" ? "Todo" : lang === "it" ? "Tutto" : "Tümü";
+            allLi.style.cursor = "pointer";
+            if (!filterYear && !filterMonth) allLi.classList.add("active-year");
+            allLi.addEventListener("click", () => { filterYear = null; filterMonth = null; openYear = null; renderCategories(lang); renderArticles(); });
+            categoryList.appendChild(allLi);
+
             const langMonths = months[lang] || months.tr;
             years.forEach(year => {
                 const li = document.createElement("li");
                 li.style.cursor = "pointer";
                 li.style.userSelect = "none";
+                if (filterYear === year && !filterMonth) li.classList.add("active-year");
+
                 const toggle = document.createElement("span");
                 toggle.textContent = (openYear === year ? "▾ " : "▸ ") + year;
                 li.appendChild(toggle);
@@ -135,246 +149,88 @@
                 subUl.style.paddingLeft = "16px";
                 subUl.style.marginTop = "6px";
                 subUl.style.display = openYear === year ? "block" : "none";
-                langMonths.forEach(month => {
+
+                langMonths.forEach((month, idx) => {
+                    const trMonth = trMonths[idx];
                     const subLi = document.createElement("li");
                     subLi.textContent = month;
                     subLi.style.cursor = "pointer";
+                    if (filterYear === year && filterMonth === trMonth) subLi.classList.add("active-month");
+                    subLi.addEventListener("click", e => {
+                        e.stopPropagation();
+                        filterYear = year; filterMonth = trMonth;
+                        renderCategories(lang); renderArticles();
+                    });
                     subUl.appendChild(subLi);
                 });
                 li.appendChild(subUl);
 
-                li.addEventListener("click", e => {
-                    if (e.target.tagName === "LI" && e.target !== li) return;
-                    openYear = openYear === year ? null : year;
-                    renderCategories(languageSelect.value);
+                li.addEventListener("click", () => {
+                    if (openYear === year) {
+                        openYear = null;
+                    } else {
+                        openYear = year;
+                        filterYear = year; filterMonth = null;
+                        renderArticles();
+                    }
+                    renderCategories(lang);
                 });
 
                 categoryList.appendChild(li);
             });
         }
 
-        languageSelect.addEventListener("change", e => renderCategories(e.target.value));
-        themeToggle.addEventListener("click", () => {
-            const light = document.body.classList.toggle("light-mode");
-            themeToggle.textContent = light ? "☾" : "☀";
-        });
-        renderCategories(languageSelect.value);
+        // ── KARTLAR ──────────────────────────────────────────────────────
+        function renderArticles(searchQ) {
+            let articles = getArticles();
 
-        // ── İŞLETME VERİLERİ ──────────────────────────────────────────────
-        const U = (id, w, h) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&h=${h}&q=80`;
+            if (filterYear)  articles = articles.filter(a => a.year === filterYear);
+            if (filterMonth) articles = articles.filter(a => a.month === filterMonth);
+            if (searchQ)     articles = articles.filter(a => a.title.toLowerCase().includes(searchQ.toLowerCase()) || a.content.toLowerCase().includes(searchQ.toLowerCase()));
 
-        const businesses = [
-            {
-                id: 0,
-                name: "Sultanahmet Sofrası",
-                category: "Restoran",
-                type: "restaurant",
-                icon: "🍽️",
-                iconClass: "restaurant-icon",
-                location: "📍 Sultanahmet, Fatih – İstanbul",
-                lat: 41.0054, lng: 28.9768,
-                tags: ["Türk Mutfağı", "Kebap", "Kahvaltı", "Paket Servis"],
-                cover: U("1555396273-367ea4eb4db5", 1400, 520),
-                menu: [
-                    { section: "Başlangıçlar", items: [
-                        { name: "Mercimek Çorbası", price: "₺85",  img: U("1547592166-23ac45744acd",320,220) },
-                        { name: "Ezme & Haydari",   price: "₺110", img: U("1512058564366-18510be2db19",320,220) },
-                        { name: "Sigara Böreği",    price: "₺95",  img: U("1603133872878-684f208fb84b",320,220) }
-                    ]},
-                    { section: "Ana Yemekler", items: [
-                        { name: "Adana Kebap",   price: "₺320", img: U("1599487488170-d11ec9c172f0",320,220) },
-                        { name: "Kuzu Tandır",   price: "₺420", img: U("1529042410759-befb1204b468",320,220) },
-                        { name: "İskender Kebap",price: "₺350", img: U("1504674900247-0877df9cc836",320,220) },
-                        { name: "Patlıcan Kebap",price: "₺290", img: U("1555939594-58d7cb561d13",320,220) }
-                    ]},
-                    { section: "Kahvaltı", items: [
-                        { name: "Serpme Kahvaltı (2 kişi)", price: "₺580", img: U("1565299507177-b0ac66763828",320,220) },
-                        { name: "Sade Kahvaltı",            price: "₺220", img: U("1484723091739-30a097e8f929",320,220) }
-                    ]},
-                    { section: "İçecekler", items: [
-                        { name: "Türk Çayı",    price: "₺30", img: U("1544787219-7f47ccb76574",320,220) },
-                        { name: "Ayran",        price: "₺45", img: U("1603569283847-aa295f0d016a",320,220) },
-                        { name: "Türk Kahvesi", price: "₺65", img: U("1509042239860-f550ce710b93",320,220) }
-                    ]}
-                ]
-            },
-            {
-                id: 1,
-                name: "Bella Güzellik Merkezi",
-                category: "Güzellik salonu",
-                type: "beauty",
-                icon: "💅",
-                iconClass: "beauty-icon",
-                location: "📍 Bağcılar Cad. No:12 – İstanbul",
-                lat: 41.0359, lng: 28.8555,
-                tags: ["Saç Bakımı", "Manikür", "Pedikür", "Kaş Şekillendirme"],
-                cover: U("1560066984-138dadb4c035", 1400, 520),
-                hair: [
-                    { name: "Saç Kesimi (Kısa)",   price: "₺350",   img: U("1560869713-7d0a29430803",320,220) },
-                    { name: "Saç Kesimi (Uzun)",    price: "₺450",   img: U("1522337360788-8b13dee7a37e",320,220) },
-                    { name: "Fön & Şekillendirme",  price: "₺280",   img: U("1522337913921-79d6f2c5cf20",320,220) },
-                    { name: "Saç Boyama (Tek Renk)",price: "₺850",   img: U("1595476108010-b4d1f102b1b1",320,220) },
-                    { name: "Balayage / Ombre",     price: "₺1.400", img: U("1599351431202-1e0f0137899a",320,220) },
-                    { name: "Keratin Bakımı",       price: "₺1.200", img: U("1519699047748-de8e457a634e",320,220) }
-                ],
-                nails: [
-                    { name: "Klasik Manikür",        price: "₺220",  img: U("1604654894610-df63bc536371",320,220) },
-                    { name: "Kalıcı Oje (Manikür)",  price: "₺320",  img: U("1604770894523-d58d60e35f29",320,220) },
-                    { name: "Nail Art (Tasarımlı)",  price: "₺450+", img: U("1604654894610-df63bc536371",320,220) },
-                    { name: "Protez Tırnak",         price: "₺600",  img: U("1604770894523-d58d60e35f29",320,220) },
-                    { name: "Klasik Pedikür",        price: "₺280",  img: U("1583997284578-7e4d4a88ebb2",320,220) },
-                    { name: "Kalıcı Oje (Pedikür)",  price: "₺380",  img: U("1583997284578-7e4d4a88ebb2",320,220) }
-                ]
-            },
-            {
-                id: 2,
-                name: "Erkek Berberi Klasik",
-                category: "Berber",
-                type: "barber",
-                icon: "✂️",
-                iconClass: "barber-icon",
-                location: "📍 Kadıköy, Moda Cad. No:45 – İstanbul",
-                lat: 40.9818, lng: 29.0305,
-                tags: ["Saç Kesimi", "Sakal Tıraşı", "Ense Düzeltme", "Cilt Bakımı"],
-                cover: U("1503951914875-452162b0f3f1", 1400, 520),
-                services: [
-                    { name: "Saç Kesimi",          price: "₺200", img: U("1585747860715-2ba37e788b70",320,220) },
-                    { name: "Sakal Tıraşı",        price: "₺150", img: U("1621605815971-fbc98d665033",320,220) },
-                    { name: "Saç + Sakal Kombo",   price: "₺320", img: U("1503951914875-452162b0f3f1",320,220) },
-                    { name: "Ense & Yanak",        price: "₺80",  img: U("1585747860715-2ba37e788b70",320,220) },
-                    { name: "Çocuk Saç Kesimi",    price: "₺150", img: U("1503951914875-452162b0f3f1",320,220) },
-                    { name: "Yüz Maskesi",         price: "₺180", img: U("1570172619644-dfd03ed5d881",320,220) }
-                ]
-            },
-            {
-                id: 3,
-                name: "Nostaljik Kafe & Pasta",
-                category: "Kafe",
-                type: "restaurant",
-                icon: "☕",
-                iconClass: "cafe-icon",
-                location: "📍 Beşiktaş, Çarşı Mah. – İstanbul",
-                lat: 41.0422, lng: 29.0073,
-                tags: ["Filtre Kahve", "Taze Pasta", "Vegan Seçenekler", "Wi-Fi"],
-                cover: U("1501339847302-ac426a4a7cbb", 1400, 520),
-                menu: [
-                    { section: "Sıcak İçecekler", items: [
-                        { name: "Filtre Kahve", price: "₺95",  img: U("1495474472287-4d71bcdd2085",320,220) },
-                        { name: "Cappuccino",   price: "₺110", img: U("1534040385115-33dcb3acba5b",320,220) },
-                        { name: "Latte",        price: "₺115", img: U("1461023058943-07fcbe16d735",320,220) },
-                        { name: "Türk Kahvesi", price: "₺75",  img: U("1509042239860-f550ce710b93",320,220) }
-                    ]},
-                    { section: "Soğuk İçecekler", items: [
-                        { name: "Cold Brew",  price: "₺130", img: U("1461023058943-07fcbe16d735",320,220) },
-                        { name: "Limonata",   price: "₺85",  img: U("1556679343-c7306c1976bc",320,220) },
-                        { name: "Smoothie",   price: "₺120", img: U("1553361371-9b22f78e8b1d",320,220) }
-                    ]},
-                    { section: "Pastalar & Tatlılar", items: [
-                        { name: "Cheesecake",          price: "₺140", img: U("1524351199678-941a58a3df50",320,220) },
-                        { name: "Çikolatalı Sufle",    price: "₺160", img: U("1606313564200-e75d5e30476c",320,220) },
-                        { name: "Vegan Brownie",       price: "₺130", img: U("1606313564200-e75d5e30476c",320,220) },
-                        { name: "Günlük Pasta Dilimi", price: "₺120", img: U("1578985545062-b69de45e4f37",320,220) }
-                    ]},
-                    { section: "Atıştırmalıklar", items: [
-                        { name: "Avokado Toast", price: "₺175", img: U("1541519227354-08fa5d50c820",320,220) },
-                        { name: "Tost",          price: "₺130", img: U("1528735602780-2552fd46c7af",320,220) },
-                        { name: "Muffin",        price: "₺95",  img: U("1614963590240-c1e9a8c03ee9",320,220) }
-                    ]}
-                ]
-            },
-            {
-                id: 4,
-                name: "Ege Mangal Evi",
-                category: "Restoran",
-                type: "restaurant",
-                icon: "🥩",
-                iconClass: "restaurant-icon",
-                location: "📍 Alsancak, Kıbrıs Şehitleri Cad. – İzmir",
-                lat: 38.4367, lng: 27.1428,
-                tags: ["Izgara Et", "Balık", "Meze", "Özel Etkinlik"],
-                cover: U("1544025162-d76694265947", 1400, 520),
-                menu: [
-                    { section: "Mezeler", items: [
-                        { name: "Zeytinyağlı Yaprak Sarma", price: "₺120", img: U("1534422298391-e4f8c172dddb",320,220) },
-                        { name: "Patlıcan Salatası",         price: "₺100", img: U("1512621776951-a57141f2eefd",320,220) },
-                        { name: "Deniz Ürünleri Salatası",   price: "₺180", img: U("1580822184713-fc5400e7fe10",320,220) },
-                        { name: "Tarama",                    price: "₺110", img: U("1512058564366-18510be2db19",320,220) }
-                    ]},
-                    { section: "Izgara Etler", items: [
-                        { name: "Dana Biftek (300g)", price: "₺580", img: U("1558030006-450675393462",320,220) },
-                        { name: "Kuzu Pirzola",       price: "₺520", img: U("1529042410759-befb1204b468",320,220) },
-                        { name: "Köfte Tabağı",       price: "₺360", img: U("1599487488170-d11ec9c172f0",320,220) }
-                    ]},
-                    { section: "Balık & Deniz Ürünleri", items: [
-                        { name: "Levrek Izgara",  price: "₺480", img: U("1510130387422-82bed34b37e9",320,220) },
-                        { name: "Karides Güveç",  price: "₺420", img: U("1559737558-2f5a35f4523b",320,220) },
-                        { name: "Kalamar Tava",   price: "₺350", img: U("1580822184713-fc5400e7fe10",320,220) }
-                    ]},
-                    { section: "İçecekler", items: [
-                        { name: "Ayran",               price: "₺50", img: U("1603569283847-aa295f0d016a",320,220) },
-                        { name: "Doğal Meyve Suyu",    price: "₺90", img: U("1553361371-9b22f78e8b1d",320,220) },
-                        { name: "Limonata",             price: "₺80", img: U("1556679343-c7306c1976bc",320,220) }
-                    ]}
-                ]
-            },
-            {
-                id: 5,
-                name: "Glow Spa & Wellness",
-                category: "Güzellik salonu",
-                type: "beauty",
-                icon: "🧴",
-                iconClass: "beauty-icon",
-                location: "📍 Konyaaltı, Atatürk Bulv. – Antalya",
-                lat: 36.8787, lng: 30.6565,
-                tags: ["Masaj", "Yüz Bakımı", "Saç Boyama", "Aromaterapi"],
-                cover: U("1540555700478-4be289fbecef", 1400, 520),
-                hair: [
-                    { name: "Saç Kesimi",         price: "₺400",   img: U("1560869713-7d0a29430803",320,220) },
-                    { name: "Fön & Şekillendirme", price: "₺300",  img: U("1522337360788-8b13dee7a37e",320,220) },
-                    { name: "Saç Boyama",          price: "₺900",   img: U("1595476108010-b4d1f102b1b1",320,220) },
-                    { name: "Saç Bakım Maskesi",   price: "₺350",   img: U("1519699047748-de8e457a634e",320,220) },
-                    { name: "Keratin Düzleştirme", price: "₺1.300", img: U("1522337913921-79d6f2c5cf22",320,220) }
-                ],
-                nails: [
-                    { name: "Manikür",          price: "₺250",  img: U("1604654894610-df63bc536371",320,220) },
-                    { name: "Kalıcı Oje",        price: "₺350",  img: U("1604770894523-d58d60e35f29",320,220) },
-                    { name: "Pedikür",           price: "₺300",  img: U("1583997284578-7e4d4a88ebb2",320,220) },
-                    { name: "Fransız Manikür",   price: "₺380",  img: U("1604654894610-df63bc536371",320,220) },
-                    { name: "Nail Art",          price: "₺500+", img: U("1604770894523-d58d60e35f29",320,220) }
-                ]
+            listingsArea.innerHTML = "";
+
+            if (!articles.length) {
+                listingsArea.innerHTML = '<div class="empty-msg">Henüz makale yok.</div>';
+                return;
             }
-        ];
 
-        // ── KARTLARI OLUŞTUR ───────────────────────────────────────────────
-        const listingsArea = document.getElementById("listingsArea");
-        businesses.forEach(b => {
-            const card = document.createElement("div");
-            card.className = "listing-card";
-            card.innerHTML = `
-                <div class="card-cover" style="background-image:url('${b.cover}')"></div>
-                <div class="card-body">
-                    <div class="listing-header">
-                        <div class="listing-icon ${b.iconClass}">${b.icon}</div>
-                        <div>
-                            <h3 class="listing-name">${b.name}</h3>
-                            <span class="listing-category">${b.category}</span>
+            articles.forEach(a => {
+                const card = document.createElement("div");
+                card.className = "listing-card article-card";
+                const excerpt = a.content.slice(0, 160).replace(/\n/g, " ");
+                card.innerHTML = `
+                    <div class="card-cover" style="background-image:url('${a.cover || ""}');background-color:#1e1a35"></div>
+                    <div class="card-body">
+                        <div class="art-meta">
+                            <span>${a.year}</span><span>·</span><span>${a.month}</span>
+                            <span>·</span><span>${a.date}</span>
                         </div>
+                        <div class="art-title">${a.title}</div>
+                        <div class="art-excerpt">${excerpt}${a.content.length > 160 ? "…" : ""}</div>
+                        <div class="art-cta">Devamını Oku →</div>
                     </div>
-                    <div class="listing-location">${b.location}</div>
-                    <div class="listing-services">
-                        ${b.tags.map(t => `<span class="service-tag">${t}</span>`).join("")}
-                    </div>
-                    <div class="listing-cta">Detayları Gör →</div>
+                `;
+                card.addEventListener("click", () => openArticleDetail(a));
+                listingsArea.appendChild(card);
+            });
+        }
+
+        // ── DETAY ────────────────────────────────────────────────────────
+        function openArticleDetail(a) {
+            listingView.classList.add("hidden");
+            detailView.classList.remove("hidden");
+            window.scrollTo(0, 0);
+
+            document.getElementById("detailArticle").innerHTML = `
+                <div class="detail-article">
+                    ${a.cover ? `<img class="art-cover-img" src="${a.cover}" alt="${a.title}">` : ""}
+                    <h1>${a.title}</h1>
+                    <div class="art-date">${a.year} / ${a.month} &nbsp;·&nbsp; ${a.date}</div>
+                    <div class="art-body">${a.content}</div>
                 </div>
             `;
-            card.addEventListener("click", () => openDetail(b));
-            listingsArea.appendChild(card);
-        });
-
-        // ── DETAY SAYFA ────────────────────────────────────────────────────
-        const listingView = document.getElementById("listingView");
-        const detailView  = document.getElementById("detailView");
-        const backBtn     = document.getElementById("backBtn");
+        }
 
         backBtn.addEventListener("click", () => {
             detailView.classList.add("hidden");
@@ -382,80 +238,21 @@
             window.scrollTo(0, 0);
         });
 
-        function openDetail(b) {
-            listingView.classList.add("hidden");
-            detailView.classList.remove("hidden");
-            window.scrollTo(0, 0);
+        // ── ARAMA ────────────────────────────────────────────────────────
+        document.getElementById("searchInput").addEventListener("input", e => {
+            renderArticles(e.target.value.trim());
+        });
 
-            document.getElementById("detailCover").src = b.cover;
-            document.getElementById("detailCoverIcon").textContent = b.icon;
-            document.getElementById("detailCoverIcon").className = `detail-cover-icon ${b.iconClass}`;
-            document.getElementById("detailName").textContent = b.name;
-            document.getElementById("detailCategory").textContent = b.category;
-            document.getElementById("detailLocation").textContent = b.location;
-            document.getElementById("detailTags").innerHTML = b.tags.map(t => `<span class="service-tag">${t}</span>`).join("");
-            document.getElementById("detailMapFrame").src = `https://maps.google.com/maps?q=${b.lat},${b.lng}&hl=tr&z=16&output=embed`;
+        // ── TEMA ─────────────────────────────────────────────────────────
+        themeToggle.addEventListener("click", () => {
+            const light = document.body.classList.toggle("light-mode");
+            themeToggle.textContent = light ? "☾" : "☀";
+        });
 
-            const main = document.getElementById("detailMain");
-            if (b.type === "restaurant") {
-                main.innerHTML = `<div class="detail-section-title">Menü</div>` + b.menu.map(sec => `
-                    <div class="menu-section-name">${sec.section}</div>
-                    <div class="menu-img-grid">
-                        ${sec.items.map(item => `
-                            <div class="menu-img-card">
-                                <img src="${item.img}" alt="${item.name}" loading="lazy">
-                                <div class="menu-img-info">
-                                    <span class="menu-img-name">${item.name}</span>
-                                    <span class="menu-img-price">${item.price}</span>
-                                </div>
-                            </div>
-                        `).join("")}
-                    </div>
-                `).join("");
-            } else if (b.type === "beauty") {
-                main.innerHTML = `
-                    <div class="detail-section-title">✂️ Saç Hizmetleri</div>
-                    <div class="menu-img-grid">
-                        ${b.hair.map(s => `
-                            <div class="menu-img-card">
-                                <img src="${s.img}" alt="${s.name}" loading="lazy">
-                                <div class="menu-img-info">
-                                    <span class="menu-img-name">${s.name}</span>
-                                    <span class="menu-img-price">${s.price}</span>
-                                </div>
-                            </div>
-                        `).join("")}
-                    </div>
-                    <div class="detail-section-title" style="margin-top:32px">💅 Tırnak Hizmetleri</div>
-                    <div class="menu-img-grid">
-                        ${b.nails.map(s => `
-                            <div class="menu-img-card">
-                                <img src="${s.img}" alt="${s.name}" loading="lazy">
-                                <div class="menu-img-info">
-                                    <span class="menu-img-name">${s.name}</span>
-                                    <span class="menu-img-price">${s.price}</span>
-                                </div>
-                            </div>
-                        `).join("")}
-                    </div>
-                `;
-            } else if (b.type === "barber") {
-                main.innerHTML = `
-                    <div class="detail-section-title">Hizmetler & Fiyatlar</div>
-                    <div class="menu-img-grid">
-                        ${b.services.map(s => `
-                            <div class="menu-img-card">
-                                <img src="${s.img}" alt="${s.name}" loading="lazy">
-                                <div class="menu-img-info">
-                                    <span class="menu-img-name">${s.name}</span>
-                                    <span class="menu-img-price">${s.price}</span>
-                                </div>
-                            </div>
-                        `).join("")}
-                    </div>
-                `;
-            }
-        }
+        // ── BAŞLANGIÇ ────────────────────────────────────────────────────
+        languageSelect.addEventListener("change", e => renderCategories(e.target.value));
+        renderCategories(languageSelect.value);
+        renderArticles();
     </script>
 </body>
 </html>

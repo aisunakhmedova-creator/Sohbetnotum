@@ -41,6 +41,16 @@
         body.light-mode .form-full input, body.light-mode .form-full textarea, body.light-mode .form-full select { background: #f3f0f9; border-color: #ddd; color: #1a1a2e; }
         body.light-mode .admin-tab { background: rgba(0,0,0,0.06); color: #1a1a2e; }
         body.light-mode .drop-zone { border-color: #ccc; }
+        /* MODAL */
+        .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.65); z-index:999; align-items:center; justify-content:center; }
+        .modal-overlay.open { display:flex; }
+        .modal-box { background:#1e1a35; border-radius:16px; padding:32px; width:100%; max-width:640px; max-height:90vh; overflow-y:auto; box-shadow:0 24px 64px rgba(0,0,0,.5); }
+        body.light-mode .modal-box { background:#fff; }
+        .modal-box h3 { font-size:18px; font-weight:600; margin-bottom:20px; }
+        .modal-actions { display:flex; gap:10px; margin-top:16px; }
+        .cancel-btn { background:rgba(255,255,255,0.08); border:none; border-radius:8px; padding:12px 24px; color:inherit; font-size:15px; cursor:pointer; }
+        .cancel-btn:hover { background:rgba(255,255,255,0.14); }
+        body.light-mode .cancel-btn { background:#eee; color:#333; }
     </style>
 </head>
 <body>
@@ -136,6 +146,49 @@
         </main>
     </div>
 
+    <!-- DÜZENLEME MODALI -->
+    <div class="modal-overlay" id="editModal">
+        <div class="modal-box">
+            <h3>Makaleyi Düzenle</h3>
+            <form class="admin-form form-full" id="editForm">
+                <input type="hidden" id="editId">
+                <label>
+                    Başlık
+                    <input type="text" id="editTitle" required>
+                </label>
+                <div class="form-row-2">
+                    <label>
+                        Yıl
+                        <select id="editYear">
+                            <option>2016</option><option>2017</option><option>2018</option>
+                        </select>
+                    </label>
+                    <label>
+                        Ay
+                        <select id="editMonth">
+                            <option>Ocak</option><option>Şubat</option><option>Mart</option>
+                            <option>Nisan</option><option>Mayıs</option><option>Haziran</option>
+                            <option>Temmuz</option><option>Ağustos</option><option>Eylül</option>
+                            <option>Ekim</option><option>Kasım</option><option>Aralık</option>
+                        </select>
+                    </label>
+                </div>
+                <label>
+                    Kapak Görseli <span style="font-size:12px;color:#777">(boş bırakılırsa mevcut görsel korunur)</span>
+                    <input type="file" id="editCover" accept="image/*">
+                </label>
+                <label>
+                    İçerik
+                    <textarea id="editContent" rows="10" required></textarea>
+                </label>
+                <div class="modal-actions">
+                    <button type="submit" class="save-btn">Kaydet</button>
+                    <button type="button" class="cancel-btn" onclick="closeEditModal()">İptal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         // ── TEMA ───────────────────────────────────────────────
         const themeToggle = document.getElementById("themeToggle");
@@ -196,6 +249,7 @@
                     <td>${a.date}</td>
                     <td><span class="pill">${a.year} / ${a.month}</span></td>
                     <td>
+                        <button class="action-btn" onclick="openEditModal(${a.id})">Düzenle</button>
                         <button class="action-btn del" onclick="deleteArticle(${a.id})">Sil</button>
                     </td>
                 </tr>`).join("")}
@@ -208,6 +262,55 @@
             renderArticleList();
             updateStats();
         }
+
+        function openEditModal(id) {
+            const a = getArticles().find(x => x.id === id);
+            if (!a) return;
+            document.getElementById("editId").value = a.id;
+            document.getElementById("editTitle").value = a.title;
+            document.getElementById("editYear").value = a.year;
+            document.getElementById("editMonth").value = a.month;
+            document.getElementById("editContent").value = a.content;
+            document.getElementById("editModal").classList.add("open");
+        }
+
+        function closeEditModal() {
+            document.getElementById("editModal").classList.remove("open");
+            document.getElementById("editForm").reset();
+        }
+
+        document.getElementById("editModal").addEventListener("click", function(e) {
+            if (e.target === this) closeEditModal();
+        });
+
+        document.getElementById("editForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            const id      = Number(document.getElementById("editId").value);
+            const title   = document.getElementById("editTitle").value.trim();
+            const year    = document.getElementById("editYear").value;
+            const month   = document.getElementById("editMonth").value;
+            const content = document.getElementById("editContent").value.trim();
+            const fileInput = document.getElementById("editCover");
+
+            const applyEdit = (newCover) => {
+                const articles = getArticles().map(a => {
+                    if (a.id !== id) return a;
+                    return { ...a, title, year, month, content, cover: newCover !== null ? newCover : a.cover };
+                });
+                saveArticles(articles);
+                renderArticleList();
+                updateStats();
+                closeEditModal();
+            };
+
+            if (fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = e => applyEdit(e.target.result);
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                applyEdit(null);
+            }
+        });
 
         // ── RESİMLER (localStorage) ────────────────────────────
         function getImages() { return JSON.parse(localStorage.getItem("sn_images") || "[]"); }
