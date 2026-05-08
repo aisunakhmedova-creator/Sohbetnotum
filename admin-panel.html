@@ -3,20 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Locally Admin Panel</title>
+    <title>SohbetNotum Admin</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .admin-tabs { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+        .admin-tab { padding: 10px 22px; border-radius: 8px; border: none; background: rgba(255,255,255,0.07); color: inherit; cursor: pointer; font-size: 15px; transition: background .2s; }
+        .admin-tab.active { background: #7c5cbf; color: #fff; }
+        .admin-tab:hover:not(.active) { background: rgba(255,255,255,0.13); }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+        .form-full label { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; font-size: 14px; color: #aaa; }
+        .form-full input, .form-full textarea, .form-full select { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.13); border-radius: 8px; padding: 10px 14px; color: inherit; font-size: 15px; width: 100%; box-sizing: border-box; outline: none; }
+        .form-full textarea { resize: vertical; }
+        .form-full input:focus, .form-full textarea:focus, .form-full select:focus { border-color: #7c5cbf; }
+        .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .save-btn { background: linear-gradient(90deg,#7c5cbf,#a78bfa); color: #fff; border: none; border-radius: 8px; padding: 12px 32px; font-size: 16px; cursor: pointer; margin-top: 8px; }
+        .save-btn:hover { opacity: .88; }
+        .drop-zone { border: 2px dashed rgba(255,255,255,0.2); border-radius: 12px; padding: 40px; text-align: center; cursor: pointer; transition: border-color .2s; }
+        .drop-zone:hover, .drop-zone.dragover { border-color: #7c5cbf; }
+        .drop-zone input[type=file] { display: none; }
+        .drop-zone p { margin: 8px 0 0; color: #aaa; font-size: 14px; }
+        .img-preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px,1fr)); gap: 12px; margin-top: 20px; }
+        .img-thumb { position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 1; background: rgba(255,255,255,0.06); }
+        .img-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .img-thumb .del-btn { position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,.6); border: none; color: #fff; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; font-size: 13px; display: flex; align-items: center; justify-content: center; }
+        .articles-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        .articles-table th { text-align: left; padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.1); color: #aaa; font-weight: 500; }
+        .articles-table td { padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.06); vertical-align: middle; }
+        .articles-table tr:hover td { background: rgba(255,255,255,0.04); }
+        .pill { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 12px; background: rgba(124,92,191,0.25); color: #a78bfa; }
+        .action-btn { background: none; border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; color: inherit; padding: 4px 12px; cursor: pointer; font-size: 13px; margin-right: 4px; }
+        .action-btn:hover { background: rgba(255,255,255,0.08); }
+        .action-btn.del { border-color: rgba(239,68,68,0.4); color: #f87171; }
+        .action-btn.del:hover { background: rgba(239,68,68,0.1); }
+        .empty-state { text-align: center; padding: 48px 0; color: #555; }
+        .section-title { font-size: 20px; font-weight: 600; margin-bottom: 20px; }
+        body.light-mode .form-full input, body.light-mode .form-full textarea, body.light-mode .form-full select { background: #f3f0f9; border-color: #ddd; color: #1a1a2e; }
+        body.light-mode .admin-tab { background: rgba(0,0,0,0.06); color: #1a1a2e; }
+        body.light-mode .drop-zone { border-color: #ccc; }
+    </style>
 </head>
 <body>
     <header class="navbar">
         <div class="logo">
-            <span class="logo-main">Local</span><span class="logo-accent">ly</span>
+            <span class="logo-main">Sohbet</span><span class="logo-accent">Notum</span>
         </div>
-
         <div class="nav-right">
-            <div class="search-box">
-                <input type="text" placeholder="Panelde ara...">
-            </div>
-
             <button class="icon-btn" id="themeToggle" type="button" aria-label="Tema değiştir">☀</button>
             <a class="admin-btn" href="./index.html">Ana Sayfa</a>
         </div>
@@ -25,190 +57,208 @@
     <div class="container admin-layout">
         <aside class="sidebar admin-sidebar">
             <div>
-                <h2>Panel Menüsü</h2>
+                <h2>Admin Panel</h2>
                 <ul>
-                    <li>Hesap Oluştur</li>
-                    <li>İşletme Bilgileri</li>
-                    <li>Konum Yönetimi</li>
-                    <li>Galeri Yükleme</li>
-                    <li>Video Tanıtımı</li>
-                    <li>Yayın Önizleme</li>
+                    <li id="menu-makale" class="active-menu" style="cursor:pointer" onclick="switchTab('makale')">Makale Ekle</li>
+                    <li id="menu-resim" style="cursor:pointer" onclick="switchTab('resim')">Resim Yükle</li>
+                    <li id="menu-liste" style="cursor:pointer" onclick="switchTab('liste')">Yayınlar</li>
                 </ul>
             </div>
-
             <div class="sidebar-note">
-                <h3>Yayın Durumu</h3>
-                <p>İşletmeler burada profil açıp isim, konum, fotoğraf ve video içeriklerini yayınlayabilir.</p>
+                <h3>Durum</h3>
+                <p id="sidebarStats">Yükleniyor...</p>
             </div>
         </aside>
 
         <main class="content admin-content">
             <section class="admin-shell">
-                <div class="panel-card hero-card">
-                    <div>
-                        <span class="eyebrow">İşletme Yönetimi</span>
-                        <h1>Her işletme kendi hesabını oluşturup içeriklerini paylaşabilir.</h1>
-                        <p>Bu panel; kayıt, işletme bilgisi, adres, görsel galeri ve video tanıtımı için tek yerden yönetim sağlar.</p>
-                    </div>
 
-                    <div class="hero-stats">
-                        <div class="stat-box">
-                            <strong>01</strong>
-                            <span>Hesap oluştur</span>
+                <!-- MAKale EKLE -->
+                <div id="tab-makale" class="tab-panel active panel-card">
+                    <p class="section-title">Yeni Makale</p>
+                    <form class="admin-form form-full" id="articleForm" onsubmit="saveArticle(event)">
+                        <label>
+                            Başlık
+                            <input type="text" id="artTitle" placeholder="Makale başlığı" required>
+                        </label>
+                        <div class="form-row-2">
+                            <label>
+                                Yıl
+                                <select id="artYear">
+                                    <option>2016</option>
+                                    <option>2017</option>
+                                    <option selected>2018</option>
+                                </select>
+                            </label>
+                            <label>
+                                Ay
+                                <select id="artMonth">
+                                    <option>Ocak</option><option>Şubat</option><option>Mart</option>
+                                    <option>Nisan</option><option>Mayıs</option><option>Haziran</option>
+                                    <option>Temmuz</option><option>Ağustos</option><option>Eylül</option>
+                                    <option>Ekim</option><option>Kasım</option><option>Aralık</option>
+                                </select>
+                            </label>
                         </div>
-                        <div class="stat-box">
-                            <strong>02</strong>
-                            <span>İşletmeni tanıt</span>
-                        </div>
-                        <div class="stat-box">
-                            <strong>03</strong>
-                            <span>Medya yükle</span>
-                        </div>
+                        <label>
+                            Kapak Görseli
+                            <input type="file" id="artCover" accept="image/*">
+                        </label>
+                        <label>
+                            İçerik
+                            <textarea id="artContent" rows="10" placeholder="Makale içeriğini buraya yazın..." required></textarea>
+                        </label>
+                        <button type="submit" class="save-btn">Yayınla</button>
+                    </form>
+                </div>
+
+                <!-- RESİM YÜKLE -->
+                <div id="tab-resim" class="tab-panel panel-card">
+                    <p class="section-title">Resim Galerisi</p>
+                    <div class="drop-zone" id="dropZone" onclick="document.getElementById('imgInput').click()">
+                        <span style="font-size:36px">📁</span>
+                        <p>Resim seçmek için tıklayın veya sürükleyip bırakın</p>
+                        <p>PNG, JPG, WEBP desteklenir</p>
+                        <input type="file" id="imgInput" accept="image/*" multiple onchange="handleImgUpload(this.files)">
+                    </div>
+                    <div class="img-preview-grid" id="imgGrid"></div>
+                </div>
+
+                <!-- YAYINLAR LİSTESİ -->
+                <div id="tab-liste" class="tab-panel panel-card">
+                    <p class="section-title">Yayınlanan Makaleler</p>
+                    <div id="articleListWrap">
+                        <div class="empty-state">Henüz makale yok.</div>
                     </div>
                 </div>
 
-                <div class="admin-grid">
-                    <section class="panel-card">
-                        <div class="section-heading">
-                            <div>
-                                <span class="eyebrow">Yeni Kullanıcı</span>
-                                <h2>Hesap Oluştur</h2>
-                            </div>
-                            <span class="status-pill">Aktif</span>
-                        </div>
-
-                        <form class="admin-form">
-                            <div class="form-row">
-                                <label>
-                                    <span>Ad Soyad</span>
-                                    <input type="text" placeholder="İşletme sahibi adı">
-                                </label>
-                                <label>
-                                    <span>E-posta</span>
-                                    <input type="email" placeholder="ornek@firma.com">
-                                </label>
-                            </div>
-
-                            <div class="form-row">
-                                <label>
-                                    <span>Şifre</span>
-                                    <input type="password" placeholder="Şifre oluştur">
-                                </label>
-                                <label>
-                                    <span>Telefon</span>
-                                    <input type="tel" placeholder="+994 / +90 ...">
-                                </label>
-                            </div>
-
-                            <button type="button" class="admin-btn">Hesabı Kaydet</button>
-                        </form>
-                    </section>
-
-                    <section class="panel-card">
-                        <div class="section-heading">
-                            <div>
-                                <span class="eyebrow">Profil</span>
-                                <h2>İşletme Bilgileri</h2>
-                            </div>
-                        </div>
-
-                        <form class="admin-form">
-                            <label>
-                                <span>İşletme Adı</span>
-                                <input type="text" placeholder="Örn. Local Coffee House">
-                            </label>
-
-                            <div class="form-row">
-                                <label>
-                                    <span>Kategori</span>
-                                    <select>
-                                        <option>Restoran</option>
-                                        <option>Kafe</option>
-                                        <option>Berber</option>
-                                        <option>Güzellik Salonu</option>
-                                        <option>Market</option>
-                                    </select>
-                                </label>
-                                <label>
-                                    <span>Çalışma Saatleri</span>
-                                    <input type="text" placeholder="09:00 - 22:00">
-                                </label>
-                            </div>
-
-                            <label>
-                                <span>Kısa Açıklama</span>
-                                <textarea rows="4" placeholder="İşletmenizi kısaca tanıtın"></textarea>
-                            </label>
-                        </form>
-                    </section>
-
-                    <section class="panel-card">
-                        <div class="section-heading">
-                            <div>
-                                <span class="eyebrow">Konum</span>
-                                <h2>Adres ve Harita Bilgisi</h2>
-                            </div>
-                        </div>
-
-                        <form class="admin-form">
-                            <label>
-                                <span>Adres</span>
-                                <input type="text" placeholder="Cadde, mahalle, bina no">
-                            </label>
-
-                            <div class="form-row">
-                                <label>
-                                    <span>Şehir</span>
-                                    <input type="text" placeholder="Bakü / İstanbul">
-                                </label>
-                                <label>
-                                    <span>Google Maps Linki</span>
-                                    <input type="url" placeholder="https://maps.google.com/...">
-                                </label>
-                            </div>
-                        </form>
-                    </section>
-
-                    <section class="panel-card">
-                        <div class="section-heading">
-                            <div>
-                                <span class="eyebrow">Medya</span>
-                                <h2>Fotoğraf ve Video Alanı</h2>
-                            </div>
-                        </div>
-
-                        <div class="upload-grid">
-                            <div class="upload-box">
-                                <strong>Fotoğraf Yükle</strong>
-                                <p>Kapak görseli, mekan içi ve ürün fotoğrafları ekleyin.</p>
-                                <button type="button" class="icon-btn wide-btn">Dosya Seç</button>
-                            </div>
-                            <div class="upload-box">
-                                <strong>Video Paylaş</strong>
-                                <p>Tanıtım videosu veya reels bağlantısı ekleyin.</p>
-                                <button type="button" class="icon-btn wide-btn">Video Ekle</button>
-                            </div>
-                        </div>
-
-                        <div class="media-preview">
-                            <div class="preview-tile">Kapak Görseli</div>
-                            <div class="preview-tile">Galeri 1</div>
-                            <div class="preview-tile">Galeri 2</div>
-                            <div class="preview-tile">Video Önizleme</div>
-                        </div>
-                    </section>
-                </div>
             </section>
         </main>
     </div>
 
     <script>
+        // ── TEMA ───────────────────────────────────────────────
         const themeToggle = document.getElementById("themeToggle");
-
         themeToggle.addEventListener("click", () => {
-            const isLightMode = document.body.classList.toggle("light-mode");
-            themeToggle.textContent = isLightMode ? "☾" : "☀";
+            const light = document.body.classList.toggle("light-mode");
+            themeToggle.textContent = light ? "☾" : "☀";
         });
+
+        // ── TAB GEÇİŞİ ────────────────────────────────────────
+        function switchTab(name) {
+            document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+            document.getElementById("tab-" + name).classList.add("active");
+            ["makale","resim","liste"].forEach(t => {
+                document.getElementById("menu-" + t).style.fontWeight = t === name ? "700" : "";
+            });
+            if (name === "liste") renderArticleList();
+        }
+
+        // ── MAKALELER (localStorage) ───────────────────────────
+        function getArticles() { return JSON.parse(localStorage.getItem("sn_articles") || "[]"); }
+        function saveArticles(arr) { localStorage.setItem("sn_articles", JSON.stringify(arr)); }
+
+        document.getElementById("articleForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            const title   = document.getElementById("artTitle").value.trim();
+            const year    = document.getElementById("artYear").value;
+            const month   = document.getElementById("artMonth").value;
+            const content = document.getElementById("artContent").value.trim();
+            const fileInput = document.getElementById("artCover");
+
+            const save = (coverDataUrl) => {
+                const articles = getArticles();
+                articles.unshift({ id: Date.now(), title, year, month, content, cover: coverDataUrl, date: new Date().toLocaleDateString("tr-TR") });
+                saveArticles(articles);
+                updateStats();
+                document.getElementById("articleForm").reset();
+                alert("Makale yayınlandı!");
+            };
+
+            if (fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = e => save(e.target.result);
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                save(null);
+            }
+        });
+
+        function renderArticleList() {
+            const articles = getArticles();
+            const wrap = document.getElementById("articleListWrap");
+            if (!articles.length) { wrap.innerHTML = '<div class="empty-state">Henüz makale yok.</div>'; return; }
+            wrap.innerHTML = `<table class="articles-table">
+                <thead><tr><th>Başlık</th><th>Tarih</th><th>Dönem</th><th>İşlem</th></tr></thead>
+                <tbody>${articles.map(a => `
+                <tr>
+                    <td>${a.title}</td>
+                    <td>${a.date}</td>
+                    <td><span class="pill">${a.year} / ${a.month}</span></td>
+                    <td>
+                        <button class="action-btn del" onclick="deleteArticle(${a.id})">Sil</button>
+                    </td>
+                </tr>`).join("")}
+                </tbody></table>`;
+        }
+
+        function deleteArticle(id) {
+            if (!confirm("Makale silinsin mi?")) return;
+            saveArticles(getArticles().filter(a => a.id !== id));
+            renderArticleList();
+            updateStats();
+        }
+
+        // ── RESİMLER (localStorage) ────────────────────────────
+        function getImages() { return JSON.parse(localStorage.getItem("sn_images") || "[]"); }
+        function saveImages(arr) { localStorage.setItem("sn_images", JSON.stringify(arr)); }
+
+        function handleImgUpload(files) {
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    const imgs = getImages();
+                    imgs.unshift({ id: Date.now() + Math.random(), src: e.target.result, name: file.name });
+                    saveImages(imgs);
+                    renderImgGrid();
+                    updateStats();
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function renderImgGrid() {
+            const imgs = getImages();
+            const grid = document.getElementById("imgGrid");
+            grid.innerHTML = imgs.map(img => `
+                <div class="img-thumb">
+                    <img src="${img.src}" alt="${img.name}">
+                    <button class="del-btn" onclick="deleteImage(${img.id})">✕</button>
+                </div>`).join("");
+        }
+
+        function deleteImage(id) {
+            saveImages(getImages().filter(i => i.id !== id));
+            renderImgGrid();
+            updateStats();
+        }
+
+        // ── DRAG & DROP ────────────────────────────────────────
+        const dz = document.getElementById("dropZone");
+        dz.addEventListener("dragover", e => { e.preventDefault(); dz.classList.add("dragover"); });
+        dz.addEventListener("dragleave", () => dz.classList.remove("dragover"));
+        dz.addEventListener("drop", e => { e.preventDefault(); dz.classList.remove("dragover"); handleImgUpload(e.dataTransfer.files); });
+
+        // ── İSTATİSTİK ─────────────────────────────────────────
+        function updateStats() {
+            const a = getArticles().length;
+            const i = getImages().length;
+            document.getElementById("sidebarStats").textContent = `${a} makale · ${i} resim`;
+        }
+
+        // ── BAŞLANGIÇ ──────────────────────────────────────────
+        renderImgGrid();
+        updateStats();
     </script>
 </body>
 </html>
