@@ -59,13 +59,13 @@ body {
 }
 
 .logo-main {
-    background: linear-gradient(90deg, #6ea8ff 0%, #63e6be 45%, #ffd166 100%);
+    background: linear-gradient(90deg, #7b8cff 0%, #b36dff 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
 .logo-accent {
-    background: linear-gradient(90deg, #ff8fab 0%, #c77dff 50%, #7b2cbf 100%);
+    background: linear-gradient(90deg, #b36dff 0%, #7b8cff 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
