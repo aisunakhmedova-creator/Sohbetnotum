@@ -81,32 +81,74 @@
 
     <script>
         // ── ÇEVİRİLER ─────────────────────────────────────────────────────
-        const translations = {
-            tr: { title: "Kategoriler", items: ["Restoran","Berber","Kafe","Manav","Market","Fırın","Eczane","Kasap","Giyim mağazası","Ayakkabı mağazası","Kozmetik mağazası","Elektronik mağazası","Güzellik salonu","Oto yıkama","Telefon/bilgisayar tamiri","Terzi","Fotoğraf & video stüdyosu","Spor salonu (fitness)","Yoga / pilates stüdyosu","Oyun salonu","Dil kursu"] },
-            az: { title: "Kateqoriyalar", items: ["Restoran","Bərbər","Kafe","Meyvə-tərəvəz dükanı","Market","Çörək sexi","Aptek","Qəssab","Geyim mağazası","Ayaqqabı mağazası","Kosmetika mağazası","Elektronika mağazası","Gözəllik salonu","Avtoyuma","Telefon/kompüter təmiri","Dərzi","Foto və video studiyası","İdman zalı (fitness)","Yoqa / pilates studiyası","Oyun salonu","Dil kursu"] },
-            en: { title: "Categories", items: ["Restaurant","Barber","Cafe","Greengrocer","Market","Bakery","Pharmacy","Butcher","Clothing store","Shoe store","Cosmetics store","Electronics store","Beauty salon","Car wash","Phone/computer repair","Tailor","Photo & video studio","Gym (fitness)","Yoga / pilates studio","Game arcade","Language course"] },
-            ar: { title: "الفئات", items: ["مطعم","حلاق","مقهى","بقال خضار وفواكه","متجر","مخبز","صيدلية","جزارة","متجر ملابس","متجر أحذية","متجر مستحضرات تجميل","متجر إلكترونيات","صالون تجميل","غسيل سيارات","إصلاح الهاتف والكمبيوتر","خياط","استوديو تصوير وفيديو","صالة رياضية","استوديو يوغا / بيلاتس","صالة ألعاب","دورة لغة"] },
-            ru: { title: "Категории", items: ["Ресторан","Барбершоп","Кафе","Овощная лавка","Маркет","Пекарня","Аптека","Мясная лавка","Магазин одежды","Магазин обуви","Магазин косметики","Магазин электроники","Салон красоты","Автомойка","Ремонт телефонов и компьютеров","Ателье","Фото- и видеостудия","Спортзал","Студия йоги / пилатеса","Игровой зал","Языковые курсы"] },
-            fr: { title: "Catégories", items: ["Restaurant","Barbier","Café","Marchand de fruits et légumes","Marché","Boulangerie","Pharmacie","Boucherie","Magasin de vêtements","Magasin de chaussures","Magasin de cosmétiques","Magasin d'électronique","Salon de beauté","Lavage auto","Réparation téléphone/ordinateur","Tailleur","Studio photo et vidéo","Salle de sport","Studio de yoga / pilates","Salle de jeux","Cours de langue"] },
-            de: { title: "Kategorien", items: ["Restaurant","Barbier","Café","Obst- und Gemüseladen","Markt","Bäckerei","Apotheke","Metzgerei","Bekleidungsgeschäft","Schuhgeschäft","Kosmetikgeschäft","Elektronikgeschäft","Schönheitssalon","Autowäsche","Handy-/Computer-Reparatur","Schneiderei","Foto- und Videostudio","Fitnessstudio","Yoga- / Pilates-Studio","Spielhalle","Sprachkurs"] },
-            es: { title: "Categorías", items: ["Restaurante","Barbería","Café","Frutería","Mercado","Panadería","Farmacia","Carnicería","Tienda de ropa","Tienda de zapatos","Tienda de cosméticos","Tienda de electrónica","Salón de belleza","Lavado de autos","Reparación de teléfonos/computadoras","Sastrería","Estudio de foto y video","Gimnasio","Estudio de yoga / pilates","Sala de juegos","Curso de idiomas"] },
-            it: { title: "Categorie", items: ["Ristorante","Barbiere","Caffè","Fruttivendolo","Mercato","Panetteria","Farmacia","Macelleria","Negozio di abbigliamento","Negozio di scarpe","Negozio di cosmetici","Negozio di elettronica","Salone di bellezza","Autolavaggio","Riparazione telefoni/computer","Sartoria","Studio fotografico e video","Palestra","Studio di yoga / pilates","Sala giochi","Corso di lingua"] },
-            fa: { title: "دسته‌بندی‌ها", items: ["رستوران","آرایشگاه مردانه","کافه","میوه و سبزی فروشی","مارکت","نانوایی","داروخانه","قصابی","فروشگاه لباس","فروشگاه کفش","فروشگاه لوازم آرایشی","فروشگاه لوازم الکترونیکی","سالن زیبایی","کارواش","تعمیر موبایل و کامپیوتر","خیاطی","استودیو عکس و ویدیو","باشگاه ورزشی","استودیو یوگا / پیلاتس","سالن بازی","کلاس زبان"] },
-            zh: { title: "分类", items: ["餐厅","理发店","咖啡馆","果蔬店","超市","面包店","药店","肉店","服装店","鞋店","化妆品店","电子产品店","美容院","洗车店","手机/电脑维修","裁缝店","摄影和视频工作室","健身房","瑜伽 / 普拉提工作室","游戏厅","语言课程"] }
+        const months = {
+            tr: ["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"],
+            az: ["Yanvar","Fevral","Mart","Aprel","May","İyun","İyul","Avqust","Sentyabr","Oktyabr","Noyabr","Dekabr"],
+            en: ["January","February","March","April","May","June","July","August","September","October","November","December"],
+            ar: ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"],
+            ru: ["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"],
+            fr: ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"],
+            de: ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"],
+            es: ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"],
+            it: ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"],
+            fa: ["ژانویه","فوریه","مارس","آوریل","مه","ژوئن","ژوئیه","اوت","سپتامبر","اکتبر","نوامبر","دسامبر"],
+            zh: ["一月","二月","三月","四月","五月","六月","七月","八月","九月","十月","十一月","十二月"]
         };
+
+        const translations = {
+            tr: { title: "Kategoriler" },
+            az: { title: "Kateqoriyalar" },
+            en: { title: "Categories" },
+            ar: { title: "الفئات" },
+            ru: { title: "Категории" },
+            fr: { title: "Catégories" },
+            de: { title: "Kategorien" },
+            es: { title: "Categorías" },
+            it: { title: "Categorie" },
+            fa: { title: "دسته‌بندی‌ها" },
+            zh: { title: "分类" }
+        };
+
+        const years = ["2016", "2017", "2018"];
 
         const languageSelect = document.getElementById("languageSelect");
         const categoryTitle  = document.getElementById("categoryTitle");
         const categoryList   = document.getElementById("categoryList");
         const themeToggle    = document.getElementById("themeToggle");
 
+        let openYear = null;
+
         function renderCategories(lang) {
             const cur = translations[lang] || translations.tr;
             categoryTitle.textContent = cur.title;
             categoryList.innerHTML = "";
-            cur.items.forEach(item => {
+            const langMonths = months[lang] || months.tr;
+            years.forEach(year => {
                 const li = document.createElement("li");
-                li.textContent = item;
+                li.style.cursor = "pointer";
+                li.style.userSelect = "none";
+                const toggle = document.createElement("span");
+                toggle.textContent = (openYear === year ? "▾ " : "▸ ") + year;
+                li.appendChild(toggle);
+
+                const subUl = document.createElement("ul");
+                subUl.style.paddingLeft = "16px";
+                subUl.style.marginTop = "6px";
+                subUl.style.display = openYear === year ? "block" : "none";
+                langMonths.forEach(month => {
+                    const subLi = document.createElement("li");
+                    subLi.textContent = month;
+                    subLi.style.cursor = "pointer";
+                    subUl.appendChild(subLi);
+                });
+                li.appendChild(subUl);
+
+                li.addEventListener("click", e => {
+                    if (e.target.tagName === "LI" && e.target !== li) return;
+                    openYear = openYear === year ? null : year;
+                    renderCategories(languageSelect.value);
+                });
+
                 categoryList.appendChild(li);
             });
         }
